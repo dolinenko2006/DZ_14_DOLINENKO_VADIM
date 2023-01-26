@@ -4,12 +4,12 @@ from utils import get_one, get_all, search_by_cast
 
 app = Flask(__name__)
 
-@app.get('/movie/<title>')
+@app.get('/movie/<title>')                     # работает # http://127.0.0.1:5000/movie/zoom
 def get_by_title(title:str):
     query = f"""
     SELECT * 
     FROM netflix
-    WHERE title LIKE '{title}'
+    WHERE title LIKE '%{title}%'
     ORDER BY date_added DESC
     """
 
@@ -28,7 +28,7 @@ def get_by_title(title:str):
     return jsonify(movie)
 
 
-@app.get('/movie/<year1>/to/<year2>')
+@app.get('/movie/<year1>/to/<year2>')                # не работает   # http://127.0.0.1:5000/movie/2010/to/2011
 def get_movie_by_year(year1: str, year2: str):
     query = f"""
     SELECT * 
@@ -44,18 +44,18 @@ def get_movie_by_year(year1: str, year2: str):
         })
     return result
 
-@app.get('/movie/rating/<value>')
+@app.get('/movie/rating/<value>')                 # работает       # http://127.0.0.1:5000/movie/rating/family
 def get_movie_by_rating(value:str):
     query = """
     SELECT *
     FROM netflix"""
 
     if value == 'children':
-        query += 'WHERE rating = "G"'
+        query += ' WHERE rating = "G"'
     elif value == 'family':
-        query += 'WHERE rating="G" OR rating="PG" OR rating="PG=13"'
+        query += ' WHERE rating="G" OR rating="PG" OR rating="PG=13"'
     elif value == 'adult':
-        query += 'WHERE rating="R" OR rating="NC=17"'
+        query += ' WHERE rating="R" OR rating="NC=17"'
     else:
         return jsonify(status=400)
 
@@ -69,7 +69,7 @@ def get_movie_by_rating(value:str):
 
     return jsonify(result)
 
-@app.get('/genre/<genre>')
+@app.get('/genre/<genre>')                  # не работает    # http://127.0.0.1:5000/gerne/comedies
 def get_movie_by_genre(genre: str):
     query = f"""
     SELECT * 
