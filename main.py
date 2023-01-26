@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from utils import get_one, get_all, search_by_cast
 
+
 app = Flask(__name__)
 
 @app.get('/movie/<title>')
@@ -8,8 +9,8 @@ def get_by_title(title:str):
     query = f"""
     SELECT * 
     FROM netflix
-    where title = '%{title}%'
-    order by date_added decs
+    WHERE title LIKE '{title}'
+    ORDER BY date_added DESC
     """
 
     query_result = get_one(query)
@@ -22,23 +23,23 @@ def get_by_title(title:str):
         'country': query_result['country'],
         'release_year': query_result['release_year'],
         'genre': query_result['listed_in'],
-        'discription': query_result['discription'],
+        'description': query_result['description'],
     }
     return jsonify(movie)
 
 
 @app.get('/movie/<year1>/to/<year2>')
-def get_movie_by_year(year1:str,year2:str):
+def get_movie_by_year(year1: str, year2: str):
     query = f"""
     SELECT * 
     FROM netflix
-    where release_year between {year1} and {year2}
-    limit 100
+    WHERE release_year BETWEEN {year1} AND {year2}
+    LIMIT 100
     """
     result = []
     for item in get_all(query):
         result.append({
-            'title':item['title'],
+            'title': item['title'],
             'result_year': item['release_year'],
         })
     return result
@@ -50,38 +51,38 @@ def get_movie_by_rating(value:str):
     FROM netflix"""
 
     if value == 'children':
-        query += 'where rating = "G"'
+        query += 'WHERE rating = "G"'
     elif value == 'family':
-        query += 'where rating="G" or rating="PG" or rating="PG=13"'
+        query += 'WHERE rating="G" OR rating="PG" OR rating="PG=13"'
     elif value == 'adult':
-        query += 'where rating="R" or rating="NC=17"'
+        query += 'WHERE rating="R" OR rating="NC=17"'
     else:
         return jsonify(status=400)
 
     result = []
     for item in get_all(query):
         result.append({
-            'title':item['title'],
-            'rating':item['rating'],
-            'description':item['description'],
+            'title': item['title'],
+            'rating': item['rating'],
+            'description': item['description'],
         })
 
     return jsonify(result)
 
 @app.get('/genre/<genre>')
-def get_movie_by_gerne(genre:str):
+def get_movie_by_genre(genre: str):
     query = f"""
-    select * 
-    from netflix
-    where listed_in like '%{gerne}%'
-    order by date_added desc 
-    limit 10
+    SELECT * 
+    FROM netflix
+    WHERE listed_in LIKE '%{genre}%'
+    ORDER BY date_added DESC 
+    LIMIT 10
     """
 
     result = []
     for item in get_all(query):
         result.append({
-            'title':item['title'],
+            'title': item['title'],
             'description': item['description'],
             })
     return jsonify(result)

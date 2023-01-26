@@ -2,19 +2,19 @@ import sqlite3
 
 
 
-def get_all(query:str):
-    with sqlite3.connect("netflix.db") as conn:
+def get_all(query: str):
+    with sqlite3.connect('netflix.db') as conn:
         conn.row_factory = sqlite3.Row
-        result = []
 
-        for item in cursor.execute(query).fetchall():
-           result.append(dict(item))
+        result = []
+        for item in conn.execute(query).fetchall():
+            result.append(dict(item))
 
         return result
 
 
 
-def get_one(query:str):
+def get_one(query: str):
 
     with sqlite3.connect('netflix.db') as conn:
         conn.row_factory = sqlite3.Row
