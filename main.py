@@ -28,7 +28,7 @@ def get_by_title(title:str):
     return jsonify(movie)
 
 
-@app.get('/movie/<year1>/to/<year2>')                # не работает   # http://127.0.0.1:5000/movie/2010/to/2011
+@app.get('/movie/<year1>/to/<year2>')                # работает   # http://127.0.0.1:5000/movie/2010/to/2011
 def get_movie_by_year(year1: str, year2: str):
     query = f"""
     SELECT * 
@@ -36,13 +36,14 @@ def get_movie_by_year(year1: str, year2: str):
     WHERE release_year BETWEEN {year1} AND {year2}
     LIMIT 100
     """
+
     result = []
     for item in get_all(query):
         result.append({
             'title': item['title'],
             'result_year': item['release_year'],
         })
-    return result
+    return jsonify(result)
 
 @app.get('/movie/rating/<value>')                 # работает       # http://127.0.0.1:5000/movie/rating/family
 def get_movie_by_rating(value:str):
@@ -69,7 +70,7 @@ def get_movie_by_rating(value:str):
 
     return jsonify(result)
 
-@app.get('/genre/<genre>')                  # не работает    # http://127.0.0.1:5000/gerne/comedies
+@app.get('/genre/<genre>')                  # работает   # http://127.0.0.1:5000/genre/Comedies           # http://127.0.0.1:5000/genre/Dramas
 def get_movie_by_genre(genre: str):
     query = f"""
     SELECT * 
